@@ -23,4 +23,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\Currencies.cs" />
+  </ItemGroup>
 </Project>

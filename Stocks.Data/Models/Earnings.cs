@@ -8,12 +8,12 @@ namespace Stocks.Data.Models
         public int Id { get; set; }
         public decimal Amount { get; set; }
         public DateTime EarningsDate { get; set; }
-        public string FromStockHistoryId { get; set; }
+        public string Ticker { get; set; }
         public int FromPortfolioId { get; set; }
         public int FromAccountId { get; set; }
 
-        [ForeignKey("FromStockHistoryId")]
-        public StockHistory StockHistoryId { get; set; }
+        [ForeignKey("Ticker")]
+        public StockTickers StockTicker { get; set; }
         [ForeignKey("FromPortfolioId")]
         public Portfolio PortfolioId { get; set; }
         [ForeignKey("FromAccountId")]

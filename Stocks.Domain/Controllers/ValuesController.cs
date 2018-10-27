@@ -1,46 +1,44 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Stocks.Data.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using YahooFinanceApi;
 
 namespace Stocks.Domain.Controllers
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
+    [Produces("application/json")]
+    public class ApiStockDataController : Controller
     {
-        // GET: api/values
+        [Route("~/api/ApiStockData/{ticker}/{start}/{end}/{period}")]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<List<StockTickers>> GetStockData(string ticker, string start,
+            string end, string period)
         {
-            return new string[] { "value1", "value2" };
-        }
+            var p = Period.Daily;
+            if (period.ToLower() == "weekly") p = Period.Weekly;
+            else if (period.ToLower() == "monthly") p = Period.Monthly;
+            var startDate = DateTime.Parse(start);
+            var endDate = DateTime.Parse(end);
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+            var hist = await Yahoo.GetHistoricalAsync(ticker, startDate, endDate, p);
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            List<StockTickers> models = new List<StockTickers>();
+            foreach (var r in hist)
+            {
+                models.Add(new StockTickers
+                {
+                    Id = ticker,
+                    Date = r.DateTime,
+                    Open = r.Open,
+                    High = r.High,
+                    Low = r.Low,
+                    Close = r.Close,
+                    AdjustedClose = r.AdjustedClose,
+                    Volume = r.Volume
+                });
+            }
+            return models;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Stocks.Data.Models
         public decimal PurchasePrice { get; set; }
 
         [ForeignKey("Ticker")]
-        public StockTickers StockTicker { get; set; }
+        public StockTicker StockTicker { get; set; }
         [ForeignKey("PortfolioId")]
         public Portfolio Porfolio { get; set; }
 

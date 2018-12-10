@@ -7,11 +7,12 @@ namespace Stocks.Data.Models
     {
         public int Id { get; set; }
         public string Ticker { get; set; }
-        public short Factor { get; set; }
+        public decimal BeforeSplit { get; set; }
+        public decimal AfterSplit { get; set; }
         public DateTime SplitTimestamp { get; set; }
 
         [ForeignKey("Ticker")]
-        public StockTickers StockTicker { get; set; }
+        public StockTicker StockTicker { get; set; }
 
     }
 }

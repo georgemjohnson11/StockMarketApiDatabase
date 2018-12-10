@@ -13,7 +13,7 @@ namespace Stocks.Data.Models
         public int FromAccountId { get; set; }
 
         [ForeignKey("Ticker")]
-        public StockTickers StockTicker { get; set; }
+        public StockTicker StockTicker { get; set; }
         [ForeignKey("FromPortfolioId")]
         public Portfolio PortfolioId { get; set; }
         [ForeignKey("FromAccountId")]

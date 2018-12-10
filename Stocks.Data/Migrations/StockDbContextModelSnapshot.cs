@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Stocks.Data;
+using Stocks.Data.Models;
 
 namespace Stocks.Data.Migrations
 {
@@ -29,6 +29,24 @@ namespace Stocks.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("Stocks.Data.Models.CsvPipe", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Key");
+
+                    b.Property<string>("LocalizationCulture");
+
+                    b.Property<string>("ResourceKey");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pipes");
                 });
 
             modelBuilder.Entity("Stocks.Data.Models.Earnings", b =>
@@ -57,7 +75,7 @@ namespace Stocks.Data.Migrations
                     b.ToTable("Earnings");
                 });
 
-            modelBuilder.Entity("Stocks.Data.Models.ExchangeRates", b =>
+            modelBuilder.Entity("Stocks.Data.Models.ExchangeRate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -128,45 +146,13 @@ namespace Stocks.Data.Migrations
 
                     b.Property<decimal>("AdjustedClose");
 
-                    b.Property<decimal>("Ask");
-
-                    b.Property<decimal>("AverageDailyVolume10Day");
-
-                    b.Property<decimal>("AverageDailyVolume3Month");
-
-                    b.Property<decimal>("Bid");
-
-                    b.Property<decimal>("BookValue");
-
                     b.Property<decimal>("Close");
 
                     b.Property<DateTime>("Date");
 
+                    b.Property<decimal>("Dividend");
+
                     b.Property<DateTime>("DividendDate");
-
-                    b.Property<DateTime>("EarningsTimestamp");
-
-                    b.Property<DateTime>("EarningsTimestampEnd");
-
-                    b.Property<DateTime>("EarningsTimestampStart");
-
-                    b.Property<decimal>("FiftyDayAverage");
-
-                    b.Property<decimal>("FiftyDayAverageChange");
-
-                    b.Property<decimal>("FiftyDayAverageChangePercent");
-
-                    b.Property<decimal>("FiftyTwoWeekHigh");
-
-                    b.Property<decimal>("FiftyTwoWeekHighChange");
-
-                    b.Property<decimal>("FiftyTwoWeekHighChangePercent");
-
-                    b.Property<decimal>("FiftyTwoWeekLow");
-
-                    b.Property<decimal>("FiftyTwoWeekLowChange");
-
-                    b.Property<decimal>("FiftyTwoWeekLowChangePercent");
 
                     b.Property<decimal>("High");
 
@@ -176,27 +162,7 @@ namespace Stocks.Data.Migrations
 
                     b.Property<decimal>("Open");
 
-                    b.Property<decimal>("RegularMarketChangePercent");
-
-                    b.Property<decimal>("RegularMarketDayHigh");
-
-                    b.Property<decimal>("RegularMarketDayLow");
-
-                    b.Property<decimal>("RegularMarketOpen");
-
-                    b.Property<decimal>("RegularMarketPreviousClose");
-
-                    b.Property<decimal>("RegularMarketPrice");
-
-                    b.Property<decimal>("RegularMarketVolume");
-
                     b.Property<string>("Ticker");
-
-                    b.Property<decimal>("TwoHundredDayAverage");
-
-                    b.Property<decimal>("TwoHundredDayAverageChange");
-
-                    b.Property<decimal>("TwoHundredDayAverageChangePercent");
 
                     b.Property<decimal>("Volume");
 
@@ -212,7 +178,9 @@ namespace Stocks.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<short>("Factor");
+                    b.Property<decimal>("AfterSplit");
+
+                    b.Property<decimal>("BeforeSplit");
 
                     b.Property<DateTime>("SplitTimestamp");
 
@@ -225,28 +193,34 @@ namespace Stocks.Data.Migrations
                     b.ToTable("StockSplits");
                 });
 
-            modelBuilder.Entity("Stocks.Data.Models.StockTickers", b =>
+            modelBuilder.Entity("Stocks.Data.Models.StockTicker", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<decimal>("ADR_TSO");
+
                     b.Property<bool>("Active");
 
-                    b.Property<decimal>("AdjustedClose");
+                    b.Property<string>("Country");
 
-                    b.Property<decimal>("Close");
+                    b.Property<string>("ExchangeMarket");
 
-                    b.Property<decimal>("High");
+                    b.Property<DateTime>("IPOYear");
 
-                    b.Property<DateTime>("History");
+                    b.Property<string>("Industry");
 
                     b.Property<bool>("IsCurrency");
 
-                    b.Property<decimal>("Low");
+                    b.Property<DateTime>("LastSale");
 
-                    b.Property<decimal>("Open");
+                    b.Property<decimal>("MarketCap");
 
-                    b.Property<decimal>("Volume");
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Sector");
+
+                    b.Property<DateTime>("UpdatedTime");
 
                     b.HasKey("Id");
 
@@ -265,18 +239,18 @@ namespace Stocks.Data.Migrations
                         .HasForeignKey("FromPortfolioId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Stocks.Data.Models.StockTickers", "StockTicker")
+                    b.HasOne("Stocks.Data.Models.StockTicker", "StockTicker")
                         .WithMany()
                         .HasForeignKey("Ticker");
                 });
 
-            modelBuilder.Entity("Stocks.Data.Models.ExchangeRates", b =>
+            modelBuilder.Entity("Stocks.Data.Models.ExchangeRate", b =>
                 {
-                    b.HasOne("Stocks.Data.Models.StockTickers", "TickerToId")
+                    b.HasOne("Stocks.Data.Models.StockTicker", "TickerToId")
                         .WithMany()
                         .HasForeignKey("TickerFrom");
 
-                    b.HasOne("Stocks.Data.Models.StockTickers", "TickerFromId")
+                    b.HasOne("Stocks.Data.Models.StockTicker", "TickerFromId")
                         .WithMany()
                         .HasForeignKey("TickerTo");
                 });
@@ -296,21 +270,21 @@ namespace Stocks.Data.Migrations
                         .HasForeignKey("PortfolioId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Stocks.Data.Models.StockTickers", "StockTicker")
+                    b.HasOne("Stocks.Data.Models.StockTicker", "StockTicker")
                         .WithMany()
                         .HasForeignKey("Ticker");
                 });
 
             modelBuilder.Entity("Stocks.Data.Models.StockHistory", b =>
                 {
-                    b.HasOne("Stocks.Data.Models.StockTickers", "StockTicker")
+                    b.HasOne("Stocks.Data.Models.StockTicker", "StockTicker")
                         .WithMany()
                         .HasForeignKey("Ticker");
                 });
 
             modelBuilder.Entity("Stocks.Data.Models.StockSplits", b =>
                 {
-                    b.HasOne("Stocks.Data.Models.StockTickers", "StockTicker")
+                    b.HasOne("Stocks.Data.Models.StockTicker", "StockTicker")
                         .WithMany()
                         .HasForeignKey("Ticker");
                 });

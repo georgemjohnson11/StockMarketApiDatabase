@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Stocks.Data.Models
 {
-    public class LocalCSV
+    public class CsvPipe
     {
         public long Id { get; set; }
         public string Key { get; set; }
@@ -9,7 +9,7 @@ namespace Stocks.Data.Models
         public string LocalizationCulture { get; set; }
         public string ResourceKey { get; set; }
 
-        public LocalCSV()
+        public CsvPipe()
         {
         }
     }

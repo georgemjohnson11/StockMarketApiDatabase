@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stocks.Data.Models
 {
-    public class ExchangeRates
+    public class ExchangeRate
 
     {
         public int Id { get; set; }
@@ -13,9 +13,9 @@ namespace Stocks.Data.Models
         public DateTime RateTime { get; set; }
 
         [ForeignKey("TickerTo")]
-        public StockTickers TickerFromId { get; set; }
+        public StockTicker TickerFromId { get; set; }
         [ForeignKey("TickerFrom")]
-        public StockTickers TickerToId { get; set; }
+        public StockTicker TickerToId { get; set; }
 
 
     }

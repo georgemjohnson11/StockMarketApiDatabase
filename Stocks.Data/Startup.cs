@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Stocks.Data.Models;
 
 namespace Stocks.Data
 {
@@ -26,9 +27,7 @@ namespace Stocks.Data
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            var connectionString = Configuration.GetConnectionString("StockDatabase");
-            services.AddEntityFrameworkNpgsql().AddDbContext<StockDbContext>(options => options.UseNpgsql(connectionString));
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -154,8 +154,6 @@ namespace Stocks.Data.Migrations
 
                     b.Property<decimal>("Dividend");
 
-                    b.Property<DateTime>("DividendDate");
-
                     b.Property<decimal>("High");
 
                     b.Property<bool>("IsCurrency");
@@ -214,7 +212,7 @@ namespace Stocks.Data.Migrations
 
                     b.Property<bool>("IsCurrency");
 
-                    b.Property<DateTime>("LastSale");
+                    b.Property<decimal>("LastSale");
 
                     b.Property<decimal>("MarketCap");
 

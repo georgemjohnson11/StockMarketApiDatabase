@@ -8,14 +8,16 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Stocks.Data.Models;
 
 namespace Stocks.Domain.Formats
 {
-    public class CsvInputFormatter :InputFormatter
+    public class CsvInputFormatter : InputFormatter
     {
         private readonly CsvFormatterOptions _options;
+        private readonly bool useJsonAttributes = true;
 
         public CsvInputFormatter(CsvFormatterOptions csvFormatterOptions)
         {
@@ -29,7 +31,7 @@ namespace Stocks.Domain.Formats
             _options = csvFormatterOptions;
         }
 
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(StockDbContext context)
+        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
             var type = context.ModelType;
             var request = context.HttpContext.Request;
@@ -41,7 +43,7 @@ namespace Stocks.Domain.Formats
             return InputFormatterResult.SuccessAsync(result);
         }
 
-        public override bool CanRead(StockDbContext context)
+        public override bool CanRead(InputFormatterContext context)
         {
             var type = context.ModelType;
             if (type == null)
@@ -99,10 +101,10 @@ namespace Stocks.Domain.Formats
                 {
                     var itemTypeInGeneric = list.GetType().GetTypeInfo().GenericTypeArguments[0];
                     var item = Activator.CreateInstance(itemTypeInGeneric);
-                    var properties = _options.UseNewtonsoftJsonDataAnnotations
+                    var properties = useJsonAttributes
                         ? item.GetType().GetProperties().Where(pi => !pi.GetCustomAttributes<JsonIgnoreAttribute>().Any()).ToArray()
                         : item.GetType().GetProperties();
-                    // TODO: Maybe refactor to not use positional mapping?, mapping by index could generate errors pretty easily <img draggable="false" class="emoji" alt="🙂" src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/svg/1f642.svg">
+
                     for (int i = 0; i < values.Length; i++)
                     {
                         properties[i].SetValue(item, Convert.ChangeType(values[i], properties[i].PropertyType), null);
@@ -131,6 +133,8 @@ namespace Stocks.Domain.Formats
     public class CsvOutputFormatter : OutputFormatter
     {
         private readonly CsvFormatterOptions _options;
+
+        private readonly bool useJsonAttributes = true;
 
         public string ContentType { get; private set; }
 
@@ -196,12 +200,20 @@ namespace Stocks.Domain.Formats
 
             var streamWriter = new StreamWriter(response.Body, Encoding.GetEncoding(_options.Encoding));
 
+            if (_options.IncludeExcelDelimiterHeader)
+            {
+                await streamWriter.WriteLineAsync($"sep ={_options.CsvDelimiter}");
+            }
 
             if (_options.UseSingleLineHeaderInCsv)
             {
-                var values = _options.UseNewtonsoftJsonDataAnnotations
+                var values = useJsonAttributes
                     ? itemType.GetProperties().Where(pi => !pi.GetCustomAttributes<JsonIgnoreAttribute>(false).Any())    // Only get the properties that do not define JsonIgnore
-                        .Select(GetDisplayNameFromNewtonsoftJsonAnnotations)
+                        .Select(pi => new
+                        {
+                            Order = pi.GetCustomAttribute<JsonPropertyAttribute>(false)?.Order ?? 0,
+                            Prop = pi
+                        }).OrderBy(d => d.Order).Select(d => GetDisplayNameFromNewtonsoftJsonAnnotations(d.Prop))
                     : itemType.GetProperties().Select(pi => pi.GetCustomAttribute<DisplayAttribute>(false)?.Name ?? pi.Name);
 
                 await streamWriter.WriteLineAsync(string.Join(_options.CsvDelimiter, values));
@@ -210,15 +222,14 @@ namespace Stocks.Domain.Formats
 
             foreach (var obj in (IEnumerable<object>)context.Object)
             {
-
-                //IEnumerable<ObjectValue> vals;
-                var vals = _options.UseNewtonsoftJsonDataAnnotations
+                var vals = useJsonAttributes
                     ? obj.GetType().GetProperties()
                         .Where(pi => !pi.GetCustomAttributes<JsonIgnoreAttribute>().Any())
                         .Select(pi => new
                         {
+                            Order = pi.GetCustomAttribute<JsonPropertyAttribute>(false)?.Order ?? 0,
                             Value = pi.GetValue(obj, null)
-                        })
+                        }).OrderBy(d => d.Order).Select(d => new { d.Value })
                     : obj.GetType().GetProperties().Select(
                         pi => new
                         {
@@ -234,8 +245,11 @@ namespace Stocks.Domain.Formats
 
                         var _val = val.Value.ToString();
 
-                        //Check if the value contains a comma and place it in quotes if so
-                        if (_val.Contains(","))
+                        //Escape quotas
+                        _val = _val.Replace("\"", "\"\"");
+
+                        //Check if the value contans a delimiter and place it in quotes if so
+                        if (_val.Contains(_options.CsvDelimiter))
                             _val = string.Concat("\"", _val, "\"");
 
                         //Replace any \r or \n special characters from a new line with a space
@@ -253,7 +267,7 @@ namespace Stocks.Domain.Formats
                     }
                 }
 
-                await streamWriter.WriteLineAsync(valueLine.TrimEnd(_options.CsvDelimiter.ToCharArray()));
+                await streamWriter.WriteLineAsync(valueLine.Remove(valueLine.Length - _options.CsvDelimiter.Length));
             }
 
             await streamWriter.FlushAsync();

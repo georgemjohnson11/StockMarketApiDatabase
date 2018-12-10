@@ -173,11 +173,11 @@ namespace Stocks.Data.Migrations
                 table: "StockTickers",
                 nullable: true);
 
-            migrationBuilder.AddColumn<DateTime>(
+            migrationBuilder.AddColumn<decimal>(
                 name: "LastSale",
                 table: "StockTickers",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: 0m);
 
             migrationBuilder.AddColumn<string>(
                 name: "Name",

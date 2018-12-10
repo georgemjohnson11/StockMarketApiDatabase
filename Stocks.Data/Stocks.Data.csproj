@@ -7,10 +7,11 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
     <Folder Include="Models\" />
+    <Folder Include="Models\Seeds\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
@@ -21,9 +22,27 @@
     <PackageReference Include="npgsql.EntityFrameworkCore.PostGreSQL" Version="2.1.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+    <PackageReference Include="TinyCsvParser" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
+    <PackageReference Include="CsvHelper" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Models\Currencies.cs" />
+    <Compile Remove="Startup.cs" />
+    <Compile Remove="StockDbContextExtensions.cs" />
+    <Compile Remove="Controllers\HomeController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Models\Seeds\zip_code_database.csv" />
+    <None Remove="Models\Seeds\NYSE.csv" />
+    <None Remove="Models\Seeds\AMEX.csv" />
+    <None Remove="Models\Seeds\DOW.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Models\Seeds\zip_code_database.csv" />
+    <EmbeddedResource Include="Models\Seeds\NYSE.csv" />
+    <EmbeddedResource Include="Models\Seeds\AMEX.csv" />
+    <EmbeddedResource Include="Models\Seeds\DOW.csv" />
   </ItemGroup>
 </Project>

@@ -22,16 +22,17 @@ namespace Stocks.Domain.Controllers
         [HttpGet]
         [Route("data.csv")]
         [Produces("text/csv")]
+
         public IActionResult GetDataAsCsv()
         {
             return Ok(DummyData());
         }
 
-        private static IEnumerable<LocalCSV> DummyData()
+        private static IEnumerable<CsvPipe> DummyData()
         {
-            var model = new List<LocalCSV>
+            var model = new List<CsvPipe>
             {
-                new LocalCSV
+                new CsvPipe
                 {
                     Id = 1,
                     Key = "test",
@@ -40,7 +41,7 @@ namespace Stocks.Domain.Controllers
                     ResourceKey = "test"
 
                 },
-                new LocalCSV
+                new CsvPipe
                 {
                     Id = 2,
                     Key = "test",
@@ -57,7 +58,7 @@ namespace Stocks.Domain.Controllers
         // POST api/csvtest/import
         [HttpPost]
         [Route("import")]
-        public IActionResult Import([FromBody]List<LocalCSV> value)
+        public IActionResult Import([FromBody]List<CsvPipe> value)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +66,7 @@ namespace Stocks.Domain.Controllers
             }
             else
             {
-                List<LocalCSV> data = value;
+                List<CsvPipe> data = value;
                 return Ok();
             }
         }

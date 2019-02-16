@@ -73,7 +73,7 @@ namespace Stocks.Domain
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            Program.GetData();
+            //Program.GetData();
         }
     }
 }

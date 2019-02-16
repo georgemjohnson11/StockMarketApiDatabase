@@ -31,20 +31,25 @@ namespace Stocks.Domain
             //We will make a GET request to a really cool website...
             using (var db = new StockDbContext())
             {
-                var listOfTickerIds = db.StockTickers.Select(r => r.Id);
-                var tickers = db.StockTickers.Where(r => listOfTickerIds.Contains(r.Id));
-                foreach (StockTicker ticker in tickers)
+                foreach (StockTicker ticker in db.StockTickers)
                 {
-                    string baseUrl = "http://testlocal:5000/api/ApiStockData/" + ticker.Id + "/2000-01-01/2018-12-07/daily";
-                    //The 'using' will help to prevent memory leaks.
+                    try {
+                        string baseUrl = "http://localhost:5001/api/ApiStockData/" + ticker.Id.ToUpper() + "/2000-01-01/2019-02-13/daily";
+                        //The 'using' will help to prevent memory leaks.
 
-                    //Create a new instance of HttpClient
-                    using (HttpClient client = new HttpClient())
-
-                    //Setting up the response...         
-
-                    using (HttpResponseMessage res = await client.GetAsync(baseUrl))
-                    await Task.Delay(50);
+                        //Create a new instance of HttpClient
+                        using (HttpClient client = new HttpClient())
+                        {
+                            //Setting up the response...         
+                            using (HttpResponseMessage res = await client.GetAsync(baseUrl))
+                            {                     
+                                await Task.Delay(50);
+                            }
+                        }
+                    }
+                    catch {
+                        
+                    }
                 }
             }
         }

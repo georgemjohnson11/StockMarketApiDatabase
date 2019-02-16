@@ -21,14 +21,6 @@ namespace Stocks.Data.Models
         public bool IsCurrency { get; set; }
         public string ExchangeMarket { get; set; }
 
-
-        /*public StockTicker GetStockTickerById(string inputId)
-        {
-            using (var db = new StockDbContext())
-            {
-                               
-            }
-        }*/
     }
 
     public class CsvStockTickerMapping : CsvMapping<StockTicker>

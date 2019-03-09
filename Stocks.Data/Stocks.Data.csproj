@@ -34,13 +34,11 @@
     <Compile Remove="Controllers\HomeController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Models\Seeds\zip_code_database.csv" />
     <None Remove="Models\Seeds\NYSE.csv" />
     <None Remove="Models\Seeds\AMEX.csv" />
     <None Remove="Models\Seeds\DOW.csv" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Models\Seeds\zip_code_database.csv" />
     <EmbeddedResource Include="Models\Seeds\NYSE.csv" />
     <EmbeddedResource Include="Models\Seeds\AMEX.csv" />
     <EmbeddedResource Include="Models\Seeds\DOW.csv" />

@@ -16,7 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Formats\" />
-    <Folder Include="Seeds\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Formats\EmptyClass.cs" />
@@ -24,13 +23,5 @@
   <ItemGroup>
     <None Remove="Seeds\AMEX.csv" />
     <None Remove="Seeds\DOW.csv" />
-    <None Remove="Seeds\NYSE.csv" />
-    <None Remove="Seeds\zip_code_database.csv" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Seeds\AMEX.csv" />
-    <EmbeddedResource Include="Seeds\DOW.csv" />
-    <EmbeddedResource Include="Seeds\NYSE.csv" />
-    <EmbeddedResource Include="Seeds\zip_code_database.csv" />
   </ItemGroup>
 </Project>

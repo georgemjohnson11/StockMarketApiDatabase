@@ -22,15 +22,18 @@ namespace Stocks.Domain.Controllers
             {
                 using (var db = new StockDbContext())
                 {
-                    return db.StockHistories.
-                        Where(b => b.Ticker.Equals(ticker) && b.Date > startDate && b.Date < endDate).ToList();
+                    foreach (StockHistory history in db.StockHistories
+                        .Where(b => b.Ticker.Equals(ticker) && b.Date > startDate && b.Date < endDate).ToList<StockHistory>())
+                    {
+                        models.Add(history);
+                    }
                 }
             }
             catch
             {
 
             }
-            return null;
+            return models;
         }
     }
 }

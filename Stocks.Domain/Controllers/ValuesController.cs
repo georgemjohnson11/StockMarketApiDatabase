@@ -9,11 +9,11 @@ using YahooFinanceApi;
 namespace Stocks.Domain.Controllers
 {
     [Produces("application/json")]
-    public class ApiStockDataController : Controller
+    public class GenerateStockDataController : Controller
     {
-        [Route("~/api/ApiStockData/{ticker}/{start}/{end}/{period}")]
+        [Route("~/api/generate/{ticker}/{start}/{end}/{period}")]
         [HttpGet]
-        public async Task<List<StockHistory>> GetStockData(ApiStockDataController instance, string ticker, string start,string end, string period)
+        public async Task<List<StockHistory>> GetStockData(GenerateStockDataController instance, string ticker, string start,string end, string period)
         {
             var p = Period.Daily;
             if (period.ToLower() == "weekly") p = Period.Weekly;

@@ -55,11 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Formats\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Formats\EmptyClass.cs" />
+    <Compile Remove="Models\ErrorViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Seeds\AMEX.csv" />

@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -18,10 +18,10 @@
     "Stocks.Domain": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://testlocal:5001;http://testlocal:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://testlocal:5001;http://testlocal:5000"
     }
   }
 }

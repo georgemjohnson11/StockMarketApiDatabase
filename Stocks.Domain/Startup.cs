@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Stocks.Data.Models;
 using Stocks.Domain.Formats;
+using Stocks.UI;
 
 namespace Stocks.Domain
 {
@@ -33,6 +29,8 @@ namespace Stocks.Domain
                     .AddDbContext<StockDbContext>(options => options.UseNpgsql(connectionString))
                     .BuildServiceProvider();
 
+            services.AddSpaStaticFiles(options => options.RootPath = "stocks-ui/dist");
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -51,7 +49,7 @@ namespace Stocks.Domain
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -66,6 +64,15 @@ namespace Stocks.Domain
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSpaStaticFiles();
+            app.UseSpa(spa =>
+                {
+                    spa.Options.SourcePath = "stocks-ui";
+                    if (env.IsDevelopment())
+                    {
+                        spa.UseVueDevelopmentServer();
+                    }
+                });
 
             app.UseMvc(routes =>
             {

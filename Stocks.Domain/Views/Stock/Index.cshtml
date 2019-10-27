@@ -1,0 +1,10 @@
+@model IEnumerable<Stocks.Data.Models.StockTicker>
+
+<ul>
+    @foreach (var stock in Model)
+    {
+        <li>@stock.Name <a asp-controller="Stocks" asp-action="Details" asp-route-id="@stock.Id">Edit</a></li>
+    }
+</ul>
+
+<a asp-controller="Stocks" asp-action="CreateNew">Create</a>

@@ -11,7 +11,7 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace Stocks.UI
+namespace Stocks.Domain
 {
     public static class Connection
     {

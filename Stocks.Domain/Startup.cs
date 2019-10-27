@@ -8,7 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Stocks.Data.Models;
 using Stocks.Domain.Formats;
-using Stocks.UI;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using System;
 
 namespace Stocks.Domain
 {
@@ -22,7 +24,7 @@ namespace Stocks.Domain
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration.GetConnectionString("StockDatabase");
             services.AddEntityFrameworkNpgsql()
@@ -30,6 +32,7 @@ namespace Stocks.Domain
                     .BuildServiceProvider();
 
             services.AddSpaStaticFiles(options => options.RootPath = "stocks-ui/dist");
+
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -46,6 +49,13 @@ namespace Stocks.Domain
                 options.OutputFormatters.Add(new CsvOutputFormatter(csvFormatterOptions));
                 options.FormatterMappings.SetMediaTypeMappingForFormat("csv", MediaTypeHeaderValue.Parse("text/csv"));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //add Stocks.Data.Services and Stocks.Domain.Services using Autofac
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterModule<AutofacModule>();
+            containerBuilder.Populate(services);
+            var container = containerBuilder.Build();
+            return new AutofacServiceProvider(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

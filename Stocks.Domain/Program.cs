@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Stocks.Data.Models;
 
 namespace Stocks.Domain
@@ -23,7 +18,7 @@ namespace Stocks.Domain
             WebHost.CreateDefaultBuilder(args)
                    .UseKestrel()
                    .UseContentRoot(Directory.GetCurrentDirectory())
-                   .UseUrls("https://testlocal:5001", "http://testlocal:26342", "http://testlocal:44338","http://testlocal:5000")
+                   .UseUrls("https://testlocal:5001", "http://testlocal:26344","http://testlocal:4999")
                    .UseStartup<Startup>();
 
         public static async void GetData()

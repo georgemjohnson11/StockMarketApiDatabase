@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 using Stocks.Data.Models;
 
 
@@ -8,12 +10,12 @@ namespace Stocks.Data.Services
 
     public interface IStockTickerService
     {
-        IReadOnlyCollection<StockTicker> GetAll();
+        Task<IReadOnlyCollection<StockTicker>> GetAllAsync(CancellationToken ct);
 
-        StockTicker GetById(string ticker);
+        Task<StockTicker> GetByIdAsync(string ticker, CancellationToken ct);
 
-        StockTicker Update(StockTicker stockTicker);
+        Task<StockTicker> UpdateAsync(StockTicker stockTicker, CancellationToken ct);
 
-        StockTicker Add(StockTicker stockTicker);
+        Task<StockTicker> AddAsync(StockTicker stockTicker, CancellationToken ct);
     }
 }

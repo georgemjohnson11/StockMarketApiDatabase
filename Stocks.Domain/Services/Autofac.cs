@@ -4,6 +4,7 @@ using Stocks.Data.Services;
 using Stocks.Domain.Services;
 using Stocks.Data.Models;
 using Autofac;
+using Serilog;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -26,25 +27,25 @@ namespace Microsoft.Extensions.DependencyInjection
 
             public IReadOnlyCollection<IStockTickerService> GetAll()
             {
-                Console.WriteLine($"######### Helloooooo from {nameof(GetAll)} #########");
+                Log.Information($"######### Helloooooo from {nameof(GetAll)} #########");
                 return (IReadOnlyCollection<IStockTickerService>)_inner.GetAll();
             }
 
             public StockTicker GetById(string ticker)
             {
-                Console.WriteLine($"######### Helloooooo from {nameof(GetById)} #########");
+                Log.Information($"######### Helloooooo from {nameof(GetById)} #########");
                 return _inner.GetById(ticker);
             }
 
             public StockTicker Update(StockTicker stockTicker)
             {
-                Console.WriteLine($"######### Helloooooo from {nameof(Update)} #########");
+                Log.Information($"######### Helloooooo from {nameof(Update)} #########");
                 return _inner.Update(stockTicker);
             }
 
             public StockTicker Add(StockTicker stockTicker)
             {
-                Console.WriteLine($"######### Helloooooo from {nameof(Add)} #########");
+                Log.Information($"######### Helloooooo from {nameof(Add)} #########");
                 return _inner.Add(stockTicker);
             }
 

@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Stocks.Data.Models;
 using Stocks.Data.Services;
@@ -18,16 +17,17 @@ namespace Stocks.Domain.Controllers
             _stockTickerService = stockTickerService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync(CancellationToken ct)
         {
-            return View(_stockTickerService.GetAll().ToViewModel());
+            var result = await _stockTickerService.GetAllAsync(ct);
+            return View("Index", result.ToViewModel());
         }
 
         [HttpGet]
         [Route("{id}")]
-        public IActionResult Details(string ticker)
+        public async Task<IActionResult> DetailsAsync(string ticker, CancellationToken ct)
         {
-            var stockTicker = _stockTickerService.GetById(ticker);
+            var stockTicker =  await _stockTickerService.GetByIdAsync(ticker, ct);
             if (stockTicker == null)
             {
                 return NotFound();
@@ -38,16 +38,16 @@ namespace Stocks.Domain.Controllers
         [HttpPost]
         [Route("{id}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string ticker, StockTicker model)
+        public async Task<IActionResult> EditAsync(string ticker, StockTicker model)
         {
-            var stockTicker = _stockTickerService.Update(model.ToServiceModel());
+            var stockTicker =  await _stockTickerService.UpdateAsync(model.ToServiceModel(), ct);
 
             if(stockTicker == null)
             {
                 return NotFound();
             }
             stockTicker.Name = model.Name;
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", stockTicker.ToViweModel());
 
         }
 
@@ -60,12 +60,12 @@ namespace Stocks.Domain.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create(StockTicker model)
+        public async IActionResult Create(StockTicker model)
         {
             using (var db = new StockDbContext())
             {
                 db.StockTickers.Add(model);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             return RedirectToAction("Index");
         }

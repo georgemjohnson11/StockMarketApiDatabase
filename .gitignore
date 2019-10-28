@@ -41,4 +41,6 @@ Thumbs.db
 *.dotCover
 
 */node_modules/*
+Stocks.Domain/stocks-ui/*
 *.vscode
+*.log

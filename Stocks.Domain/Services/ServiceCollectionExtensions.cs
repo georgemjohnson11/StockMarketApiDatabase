@@ -1,17 +1,22 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Stocks.Data.Services;
+using Stocks.Domain.Mappings;
 
 namespace Stocks.Domain.Services
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddBusiness(this IServiceCollection services)
+        public static IServiceCollection AddRequiredMvcComponents(this IServiceCollection services)
         {
-            services.AddSingleton<IStockTickerService, InMemoryStockTickerService>();
+            services.AddTransient<ApiExceptionFilter>();
 
-            //more services...
-
+            var mvcBuilder = services.AddMvcCore(options =>
+            {
+                options.Filters.AddService<ApiExceptionFilter>();
+            });
+            mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            mvcBuilder.AddJsonFormatters();
             return services;
         }
     }

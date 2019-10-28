@@ -7,7 +7,7 @@ namespace Stocks.Domain.Mappings
 {
     public static class StockTickerMappings
     {
-        public static StockTicker ToViewModel(this StockTicker model)
+        public static StockTicker ToModel(this StockTicker model)
         {
             return model != null ? new StockTicker { Id = model.Id, Name = model.Name } : null;
         }
@@ -17,7 +17,7 @@ namespace Stocks.Domain.Mappings
             return model != null ? new StockTicker { Id = model.Id, Name = model.Name } : null;
         }
 
-        public static IReadOnlyCollection<StockTicker> ToViewModel(this IReadOnlyCollection<StockTicker> models)
+        public static IReadOnlyCollection<StockTicker> ToModel(this IReadOnlyCollection<StockTicker> models)
         {
             if (models.Count == 0)
             {
@@ -28,7 +28,7 @@ namespace Stocks.Domain.Mappings
             var i = 0;
             foreach (var model in models)
             {
-                stockTickers[i] = model.ToViewModel();
+                stockTickers[i] = model.ToModel();
                 ++i;
             }
 

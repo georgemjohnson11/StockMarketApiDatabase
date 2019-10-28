@@ -17,5 +17,7 @@ namespace Stocks.Data.Services
         Task<StockTicker> UpdateAsync(StockTicker stockTicker, CancellationToken ct);
 
         Task<StockTicker> AddAsync(StockTicker stockTicker, CancellationToken ct);
+
+        Task<StockTicker> RemoveAsync(StockTicker stockTicker, CancellationToken ct);
     }
 }

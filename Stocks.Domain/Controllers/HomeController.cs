@@ -8,7 +8,7 @@ using Stocks.Data.Models;
 
 namespace Stocks.Domain.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : ControllerBase
     {
         public IActionResult Index()
         {

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Stocks.Data.Services;
 using Stocks.Domain.Services;
 using Stocks.Data.Models;
+using System.Threading;
 using Autofac;
 using Serilog;
+using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -25,33 +27,48 @@ namespace Microsoft.Extensions.DependencyInjection
                 _inner = inner;
             }
 
-            public IReadOnlyCollection<IStockTickerService> GetAll()
+            public async Task<IReadOnlyCollection<IStockTickerService>> GetAllAsync(CancellationToken ct)
             {
-                Log.Information($"######### Helloooooo from {nameof(GetAll)} #########");
-                return (IReadOnlyCollection<IStockTickerService>)_inner.GetAll();
+                Log.Information($"######### Helloooooo from {nameof(GetAllAsync)} #########");
+                return (IReadOnlyCollection<IStockTickerService>)_inner.GetAllAsync(ct);
             }
 
-            public StockTicker GetById(string ticker)
+            public async Task<StockTicker> GetByIdAsync(string ticker, CancellationToken ct)
             {
-                Log.Information($"######### Helloooooo from {nameof(GetById)} #########");
-                return _inner.GetById(ticker);
+                Log.Information($"######### Helloooooo from {nameof(GetByIdAsync)} #########");
+                return await _inner.GetByIdAsync(ticker, ct);
             }
 
-            public StockTicker Update(StockTicker stockTicker)
+            public async Task<StockTicker> Update(StockTicker stockTicker, CancellationToken ct)
             {
                 Log.Information($"######### Helloooooo from {nameof(Update)} #########");
-                return _inner.Update(stockTicker);
+                return await _inner.UpdateAsync(stockTicker, ct);
             }
 
-            public StockTicker Add(StockTicker stockTicker)
+            public async Task<StockTicker> Add(StockTicker stockTicker, CancellationToken ct)
             {
                 Log.Information($"######### Helloooooo from {nameof(Add)} #########");
-                return _inner.Add(stockTicker);
+                return await _inner.AddAsync(stockTicker, ct);
             }
 
-            IReadOnlyCollection<StockTicker> IStockTickerService.GetAll()
+            Task<IReadOnlyCollection<StockTicker>> IStockTickerService.GetAllAsync(CancellationToken ct)
             {
-                return _inner.GetAll();
+                return _inner.GetAllAsync(ct);
+            }
+
+            public Task<StockTicker> UpdateAsync(StockTicker stockTicker, CancellationToken ct)
+            {
+                return _inner.UpdateAsync(stockTicker, ct);
+            }
+
+            public Task<StockTicker> AddAsync(StockTicker stockTicker, CancellationToken ct)
+            {
+                return _inner.AddAsync(stockTicker, ct);
+            }
+
+            public Task<StockTicker> RemoveAsync(StockTicker stockTicker, CancellationToken ct)
+            {
+                return _inner.RemoveAsync(stockTicker, ct);
             }
         }
     }

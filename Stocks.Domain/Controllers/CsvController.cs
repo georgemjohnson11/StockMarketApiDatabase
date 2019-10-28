@@ -10,7 +10,7 @@ using Stocks.Data.Models;
 namespace Stocks.Domain.Controllers
 {
     [Route("api/[controller]")]
-    public class CSVController : Controller
+    public class CSVController : ControllerBase
     {
         // GET api/csvtest
         [HttpGet]

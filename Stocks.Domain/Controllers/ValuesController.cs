@@ -9,7 +9,7 @@ using YahooFinanceApi;
 namespace Stocks.Domain.Controllers
 {
     [Produces("application/json")]
-    public class ApiStockDataController : Controller
+    public class ApiStockDataController : ControllerBase
     {
         [Route("~/api/generate/{ticker}/{start}/{end}/{period}")]
         [HttpGet]

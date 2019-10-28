@@ -43,7 +43,7 @@ namespace Stocks.Domain
 
             var csvFormatterOptions = new CsvFormatterOptions();
             services.AddHttpClient();
-            services.AddMvc(options =>
+            services.AddMvcCore(options =>
             {
                 options.InputFormatters.Add(new CsvInputFormatter(csvFormatterOptions));
                 options.OutputFormatters.Add(new CsvOutputFormatter(csvFormatterOptions));

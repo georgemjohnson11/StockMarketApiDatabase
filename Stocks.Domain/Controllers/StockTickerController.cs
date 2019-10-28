@@ -8,7 +8,7 @@ using Stocks.Domain.Mappings;
 namespace Stocks.Domain.Controllers
 {
     [Route("stocktickers")]
-    public class StockTickerController : Controller
+    public class StockTickerController : ControllerBase
     {
         private readonly IStockTickerService _stockTickerService;
 
@@ -17,57 +17,58 @@ namespace Stocks.Domain.Controllers
             _stockTickerService = stockTickerService;
         }
 
-        public async Task<IActionResult> IndexAsync(CancellationToken ct)
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetAllAsync(CancellationToken ct)
         {
             var result = await _stockTickerService.GetAllAsync(ct);
-            return View("Index", result.ToViewModel());
+            return Ok(result.ToModel());
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> DetailsAsync(string ticker, CancellationToken ct)
+        public async Task<IActionResult> GetByIdAsync(string ticker, CancellationToken ct)
         {
             var stockTicker =  await _stockTickerService.GetByIdAsync(ticker, ct);
             if (stockTicker == null)
             {
                 return NotFound();
             }
-            return View(stockTicker.ToViewModel());
+            return Ok(stockTicker.ToModel());
         }
 
         [HttpPost]
         [Route("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAsync(string ticker, StockTicker model)
+        public async Task<IActionResult> UpdateAsync(string ticker, StockTicker model, CancellationToken ct)
         {
             var stockTicker =  await _stockTickerService.UpdateAsync(model.ToServiceModel(), ct);
+            stockTicker.Id = ticker;
 
-            if(stockTicker == null)
+            if (stockTicker == null)
             {
                 return NotFound();
             }
-            stockTicker.Name = model.Name;
-            return RedirectToAction("Index", stockTicker.ToViweModel());
+            return Ok(stockTicker.ToModel());
 
         }
 
-        [HttpGet]
-        [Route("create")]
-        public IActionResult CreateNew()
-        {
-            return View();
-        }
-
+        [HttpPut]
         [HttpPost]
-        [Route("create")]
-        public async IActionResult Create(StockTicker model)
+        [Route("")]
+        public async Task<IActionResult> AddAsync(StockTicker model, CancellationToken ct)
         {
-            using (var db = new StockDbContext())
-            {
-                db.StockTickers.Add(model);
-                await db.SaveChangesAsync();
-            }
-            return RedirectToAction("Index");
+            model.Id = "GOOG";
+            var stockTicker = await _stockTickerService.AddAsync(model.ToServiceModel(), ct);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = stockTicker.Id }, stockTicker.ToModel());
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> RemoveAsync(StockTicker ticker, CancellationToken ct)
+        {
+            await _stockTickerService.RemoveAsync(ticker, ct);
+            return NoContent();
         }
     }
 }

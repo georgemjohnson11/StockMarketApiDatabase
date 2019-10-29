@@ -36,12 +36,14 @@
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="2.5.3" />
+    <PackageReference Include="IdentityServer4" Version="2.5.3" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.5.3" />
   </ItemGroup>
     
     <ItemGroup>  
      
     <Content Remove="$(SpaRoot)**" />  
-    <None Remove="$(SpaRoot)**" />  
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     <Content Remove="Views\_ViewImports.cshtml" />
     <Content Remove="Views\_ViewStart.cshtml" />
@@ -75,10 +77,13 @@
     <Folder Include="Formats\" />
     <Folder Include="Mappings\" />
     <Folder Include="Services\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="AuthTokenHelpers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Formats\EmptyClass.cs" />
     <Compile Remove="Models\ErrorViewModel.cs" />
+    <Compile Remove="Controllers\HomeController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Seeds\AMEX.csv" />

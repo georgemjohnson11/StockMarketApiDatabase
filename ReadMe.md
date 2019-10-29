@@ -1,6 +1,15 @@
  # Overview   
- This application produces a Postgresql database populated with stock market information and I've split this solution up into two projects: Stocks.Domain and Stocks.Data   
-The Stocks.Data is the models for the stock market and saving YahooFinanceAPI's json into Postgres SQL. Stocks.Domain is used for displaying, manipulating, and controlling the stock information and API.   
+ This application works with a Postgresql database populated with stock market information and I've split this solution up into two projects: Stocks.Domain and Stocks.Data   
+The Stocks.Data is the models for the stock market and saving YahooFinanceAPI's json into Postgres SQL. The models are written using Entity Framework Core.   Stocks.Domain is used for displaying, manipulating, and controlling the stock information and API. The API uses RESTful properties and reads/writes asynchronously.
+
+Mapping - A folder for filters and maps to models   
+
+Logging - Serilog is utilized to inject logging throughout the application   
+
+Users - IdentityServer4 is used to manage user login with OpenID Connect and OAuth 2.0   
+
+The UI is controlled by a Vue app: https://github.com/georgemjohnson11/stockmarket-vue   
+
 
 # Prerequisites   
 Database (Postgres)   

@@ -11,6 +11,17 @@ using Stocks.Domain.Formats;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using System;
+using Stocks.Domain.Services;
+using Stocks.Domain.AuthTokenHelpers;
+using IdentityModel;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Net.Http;
+using Stocks.Domain.Controllers;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Stocks.Domain
 {
@@ -42,13 +53,27 @@ namespace Stocks.Domain
             });
 
             var csvFormatterOptions = new CsvFormatterOptions();
-            services.AddHttpClient();
-            services.AddMvcCore(options =>
+            services.AddRequiredMvcComponents();
+
+            services.AddSingleton<IDiscoveryCache>(r =>
             {
-                options.InputFormatters.Add(new CsvInputFormatter(csvFormatterOptions));
-                options.OutputFormatters.Add(new CsvOutputFormatter(csvFormatterOptions));
-                options.FormatterMappings.SetMediaTypeMappingForFormat("csv", MediaTypeHeaderValue.Parse("text/csv"));
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                var factory = r.GetRequiredService<IHttpClientFactory>();
+                return new DiscoveryCache("https://localhost:5005", () => factory.CreateClient());
+            });
+
+            services
+                .AddTransient<CustomCookieAuthenticationEvents>()
+                .AddTransient<ITokenRefresher, TokenRefresher>()
+                .AddTransient<AccessTokenHttpMessageHandler>()
+                .TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services
+                .AddHttpClient<ITokenRefresher, TokenRefresher>()
+                .AddHttpMessageHandler<AccessTokenHttpMessageHandler>();            
+
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddConfiguredAuth();
 
             //add Stocks.Data.Services and Stocks.Domain.Services using Autofac
             var containerBuilder = new ContainerBuilder();
@@ -83,13 +108,8 @@ namespace Stocks.Domain
                         spa.UseVueDevelopmentServer();
                     }
                 });
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseAuthentication();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }

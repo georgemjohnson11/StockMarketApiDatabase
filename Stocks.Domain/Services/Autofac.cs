@@ -14,7 +14,6 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<InMemoryStockTickerService>().Named<IStockTickerService>("stocktickersService").SingleInstance();
             builder.RegisterDecorator<IStockTickerService>((context, service) => new StockTickerServiceDecorator(service), "stocksService");
         }
 

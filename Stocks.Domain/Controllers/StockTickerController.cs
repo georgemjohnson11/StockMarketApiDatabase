@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -11,36 +13,39 @@ namespace Stocks.Domain.Controllers
     public class StockTickerController : ControllerBase
     {
         private readonly IStockTickerService _stockTickerService;
+        private const string BaseAddress = "/stocktickers";
+        private readonly HttpClient _httpClient;
 
-        public StockTickerController(IStockTickerService stockTickerService)
+        public StockTickerController(HttpClient httpClient)
         {
-            _stockTickerService = stockTickerService;
+            _httpClient = httpClient;
         }
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAllAsync(CancellationToken ct)
+        public async Task<ActionResult<StockTicker>> GetAllAsync(CancellationToken ct)
         {
-            var result = await _stockTickerService.GetAllAsync(ct);
-            return Ok(result.ToModel());
+            var response = await _httpClient.GetAsync(BaseAddress, ct);
+            var result = await response.Content.ReadAsAsync<IReadOnlyCollection<StockTicker>>(ct);
+            return Ok(result);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetByIdAsync(string ticker, CancellationToken ct)
+        public async Task<ActionResult> GetByIdAsync(string ticker, CancellationToken ct)
         {
             var stockTicker =  await _stockTickerService.GetByIdAsync(ticker, ct);
             if (stockTicker == null)
             {
                 return NotFound();
             }
-            return Ok(stockTicker.ToModel());
+            return Ok(stockTicker);
         }
 
         [HttpPost]
         [Route("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateAsync(string ticker, StockTicker model, CancellationToken ct)
+        public async Task<ActionResult> UpdateAsync(string ticker, StockTicker model, CancellationToken ct)
         {
             var stockTicker =  await _stockTickerService.UpdateAsync(model.ToServiceModel(), ct);
             stockTicker.Id = ticker;
@@ -56,7 +61,7 @@ namespace Stocks.Domain.Controllers
         [HttpPut]
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> AddAsync(StockTicker model, CancellationToken ct)
+        public async Task<ActionResult> AddAsync(StockTicker model, CancellationToken ct)
         {
             model.Id = "GOOG";
             var stockTicker = await _stockTickerService.AddAsync(model.ToServiceModel(), ct);
@@ -65,7 +70,7 @@ namespace Stocks.Domain.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> RemoveAsync(StockTicker ticker, CancellationToken ct)
+        public async Task<ActionResult> RemoveAsync(StockTicker ticker, CancellationToken ct)
         {
             await _stockTickerService.RemoveAsync(ticker, ct);
             return NoContent();

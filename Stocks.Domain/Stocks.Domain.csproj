@@ -24,6 +24,7 @@
     <PackageReference Include="IdentityServer4.EntityFramework" Version="2.5.3" />
     <PackageReference Include="IdentityServer4" Version="2.5.3" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.5.3" />
+    <PackageReference Include="ProxyKit" Version="2.2.1" />
   </ItemGroup>
     
     <ItemGroup>  
@@ -43,6 +44,9 @@
     <Content Remove="Views\Stock\Create.cshtml" />
     <Content Remove="Views\Stock\Index.cshtml" />
     <Content Remove="Views\Stock\Details.cshtml" />
+    <Content Remove="Configuration\appsettings.Development.json" />
+    <Content Remove="appsettings.json" />
+    <Content Remove="appsettings.Development.json" />
   </ItemGroup>  
   
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">  
@@ -69,6 +73,7 @@
     <Compile Remove="Formats\EmptyClass.cs" />
     <Compile Remove="Models\ErrorViewModel.cs" />
     <Compile Remove="Controllers\HomeController.cs" />
+    <Compile Remove="Configuration\ConfigurationSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Seeds\AMEX.csv" />
@@ -1351,5 +1356,17 @@
     <TypeScriptCompile Include="stocks-ui\node_modules\rxjs\src\operator\throttleTime.ts" />
     <TypeScriptCompile Include="stocks-ui\node_modules\rxjs\src\operator\concatMapTo.ts" />
     <TypeScriptCompile Include="stocks-ui\node_modules\rxjs\src\operator\ignoreElements.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="appsettings.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Compile>
+    <Compile Include="appsettings.Development.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Compile>
   </ItemGroup>
 </Project>

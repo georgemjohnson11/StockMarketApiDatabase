@@ -1,104 +1,61 @@
-﻿
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.SpaServices;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Stocks.Domain
 {
-    public static class Connection
+    public class ProxiedApiRouteEndpointLookup
     {
+        // The double dictionary strategy can be simplified if we're able to lookup directly with a ReadOnlySpan<char>
+        // Work in progress here -> https://github.com/dotnet/corefx/issues/31942
 
-        private static int Port { get; } = 8080;
-        private static Uri DevelopmentServerEndpoint { get; } = new Uri($"http://localhost:{Port}");
-        private static TimeSpan Timeout { get; } = TimeSpan.FromSeconds(60);
+        private readonly Dictionary<string, string> _routeToEndpointMap;
+        private readonly Dictionary<int, string[]> _routeMatcher;
 
-        private static string DoneMessage { get; } = "DONE  Compiled successfully in";
-
-        public static void UseVueDevelopmentServer(this ISpaBuilder spa)
+        public ProxiedApiRouteEndpointLookup(Dictionary<string, string> routeToEndpointMap)
         {
-            spa.UseProxyToSpaDevelopmentServer(async () =>
-            {
-                var loggerFactory = spa.ApplicationBuilder.ApplicationServices.GetService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger("Vue");
-
-                if (IsRunning())
-                {
-                    return DevelopmentServerEndpoint;
-                }
-
-
-                var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                var processInfo = new ProcessStartInfo
-                {
-                    FileName = isWindows ? "cmd" : "npm",
-                    Arguments = $"{(isWindows ? "/c npm " : "")}run serve",
-                    WorkingDirectory = "stocks-ui",
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                };
-                var process = Process.Start(processInfo);
-                var tcs = new TaskCompletionSource<int>();
-                _ = Task.Run(() =>
-                {
-                    try
-                    {
-                        string line;
-                        while ((line = process.StandardOutput.ReadLine()) != null)
-                        {
-                            logger.LogInformation(line);
-                            if (!tcs.Task.IsCompleted && line.Contains(DoneMessage))
-                            {
-                                tcs.SetResult(1);
-                            }
-                        }
-                    }
-                    catch (EndOfStreamException ex)
-                    {
-                        logger.LogError(ex.ToString());
-                        tcs.SetException(new InvalidOperationException("'npm run serve' failed.", ex));
-                    }
-                });
-                _ = Task.Run(() =>
-                {
-                    try
-                    {
-                        string line;
-                        while ((line = process.StandardError.ReadLine()) != null)
-                        {
-                            logger.LogError(line);
-                        }
-                    }
-                    catch (EndOfStreamException ex)
-                    {
-                        logger.LogError(ex.ToString());
-                        tcs.SetException(new InvalidOperationException("'npm run serve' failed.", ex));
-                    }
-                });
-
-                var timeout = Task.Delay(Timeout);
-                if (await Task.WhenAny(timeout, tcs.Task) == timeout)
-                {
-                    throw new TimeoutException();
-                }
-
-                return DevelopmentServerEndpoint;
-            });
-
+            _routeToEndpointMap = routeToEndpointMap ?? throw new ArgumentNullException(nameof(routeToEndpointMap));
+            _routeMatcher = _routeToEndpointMap
+                .Keys
+                .GroupBy(
+                    r => r.GetHashCode(),
+                    r => r)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.ToArray());
         }
 
-        private static bool IsRunning() => IPGlobalProperties.GetIPGlobalProperties()
-                .GetActiveTcpListeners()
-                .Select(x => x.Port)
-                .Contains(Port);
+        public bool TryGet(PathString path, out string endpoint)
+        {
+            endpoint = null;
+            var pathSpan = path.Value.AsSpan();
+            var basePathEnd = pathSpan.Slice(1, pathSpan.Length - 1).IndexOf('/');
+            var basePath = pathSpan.Slice(1, basePathEnd > 0 ? basePathEnd : pathSpan.Length - 1);
+
+            // when we upgrade to .NET Core 3.0, we can use string.GetHashCode(basePath)
+            // to get the hashcode directly from the span, which will be much better for allocations
+            if (_routeMatcher.TryGetValue(basePath.ToString().GetHashCode(), out var routes))
+            {
+                var route = FindRoute(basePath, routes);
+                return !(route is null) && _routeToEndpointMap.TryGetValue(route, out endpoint);
+            }
+
+            return false;
+        }
+
+        private static string FindRoute(ReadOnlySpan<char> route, string[] routes)
+        {
+            for (var i = 0; i < routes.Length; ++i)
+            {
+                var currentRoute = routes[i];
+                if (MemoryExtensions.Equals(route, currentRoute, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return currentRoute;
+                }
+            }
+
+            return null;
+        }
     }
 }

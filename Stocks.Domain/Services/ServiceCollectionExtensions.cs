@@ -29,6 +29,7 @@ namespace Stocks.Domain.Services
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             mvcBuilder.AddJsonFormatters();
             mvcBuilder.AddAuthorization();
+            mvcBuilder.AddControllersAsServices();
             return services;
         }
 
@@ -57,7 +58,7 @@ namespace Stocks.Domain.Services
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
 
-                    options.Scope.Add("StockTickerManagement");
+                    options.Scope.Add("StockTickers");
                     options.Scope.Add(OidcConstants.StandardScopes.OfflineAccess);
 
                     options.Events.OnRedirectToIdentityProvider = context =>

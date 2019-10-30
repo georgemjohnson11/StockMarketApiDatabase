@@ -10,10 +10,11 @@ namespace Stocks.Domain
     {
         public static void Main(string[] args)
         {
+            var logPath = Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "logs"));
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .WriteTo.File(Path.Combine(Environment.CurrentDirectory, "logs", "stocks.log"), rollingInterval: RollingInterval.Day)
+                .WriteTo.File(Path.Combine(logPath.FullName, "stocks.log"), rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             Log.Debug("Starting up");
 
@@ -22,8 +23,7 @@ namespace Stocks.Domain
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                   .UseKestrel()
-                   .UseUrls("https://testlocal:12433")
+                   .UseUrls("http://localhost:5001")
                    .UseContentRoot(Directory.GetCurrentDirectory())
                    .UseStartup<Startup>();
 

@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <SpaRoot>stocks-ui\</SpaRoot>  
-    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>  
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>  
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>  
     <IsPackable>false</IsPackable>
@@ -36,21 +34,5 @@
     <Folder Include="Services\" />
     <Folder Include="Extensions\" />
     <Folder Include="AuthTokenHelpers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Formats\EmptyClass.cs" />
-    <Compile Remove="Models\ErrorViewModel.cs" />
-    <Compile Remove="Controllers\HomeController.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Seeds\AMEX.csv" />
-    <None Remove="Seeds\DOW.csv" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Shared\_CookieConsentPartial.cshtml" />
-    <Content Remove="Shared\_Layout.cshtml" />
-    <Content Remove="Shared\_ValidationScriptsPartial.cshtml" />
-    <Content Remove="Shared\Error.cshtml" />
-    <Content Remove="wwwroot\favicon.ico" />
   </ItemGroup>
 </Project>

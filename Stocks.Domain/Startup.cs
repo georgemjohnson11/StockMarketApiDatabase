@@ -18,7 +18,6 @@ using Microsoft.Extensions.Hosting;
 using ProxyKit;
 using Stocks.Data.Models;
 using Stocks.Domain.AuthTokenHelpers;
-using Stocks.Domain.Configuration;
 using Stocks.Domain.Services;
 
 namespace Stocks.Domain
@@ -64,10 +63,6 @@ namespace Stocks.Domain
                 .AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
             services.AddProxy();
-
-            services.AddSingleton(
-                new ProxiedApiRouteEndpointLookup(
-                    _configuration.GetSection<Dictionary<string, string>>("ApiRoutes")));
 
             services
                 .AddSingleton<EnforceAuthenticatedUserMiddleware>()

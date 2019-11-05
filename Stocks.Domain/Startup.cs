@@ -1,12 +1,8 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 
 using ProxyKit;
 using Stocks.Data.Models;
-using Stocks.Domain.AuthTokenHelpers;
 using Stocks.Domain.Services;
 
 namespace Stocks.Domain
@@ -49,9 +44,7 @@ namespace Stocks.Domain
 
             services.AddProxy();
 
-            services
-                .AddSingleton<EnforceAuthenticatedUserMiddleware>()
-                .AddSingleton<ValidateAntiForgeryTokenMiddleware>();
+            
 
             services.AddConfiguredAuth(_configuration);
             services.AddBusiness();
@@ -72,29 +65,6 @@ namespace Stocks.Domain
             }
 
             app.UseAuthentication();
-            app.UseMiddleware<EnforceAuthenticatedUserMiddleware>();
-            app.UseMiddleware<ValidateAntiForgeryTokenMiddleware>();
-
-            app.Map("/api", api =>
-            {
-                api.RunProxy(async context =>
-                {
-                    var endpointLookup = context.RequestServices.GetRequiredService<ProxiedApiRouteEndpointLookup>();
-                    if (endpointLookup.TryGet(context.Request.Path, out var endpoint))
-                    {
-                        var forwardContext = context
-                            .ForwardTo(endpoint)
-                            .CopyXForwardedHeaders();
-
-                        var token = await context.GetAccessTokenAsync();
-                        forwardContext.UpstreamRequest.SetBearerToken(token);
-
-                        return await forwardContext.Send();
-                    }
-
-                    return new HttpResponseMessage(HttpStatusCode.NotFound);
-                });
-            });
 
             app.UseStaticFiles();
             app.UseCookiePolicy();

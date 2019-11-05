@@ -5,34 +5,23 @@ using Stocks.Data.Models;
 
 namespace Stocks.Domain.Mappings
 {
-    public static class StockTickerMappings
+    internal static class StockTickerMappings
     {
-        public static StockTicker ToModel(this StockTicker model)
+        public static StockTicker ToService(this StockTicker entity)
         {
-            return model != null ? new StockTicker { Id = model.Id, Name = model.Name } : null;
+            return entity != null
+                ? new StockTicker { Id = entity.Id, Name = entity.Name }
+                : null;
         }
 
-        public static StockTicker ToServiceModel(this StockTicker model)
+        public static StockTicker ToEntity(this StockTicker model)
         {
-            return model != null ? new StockTicker { Id = model.Id, Name = model.Name } : null;
+            return model != null
+                ? new StockTicker { Id = model.Id, Name = model.Name }
+                : null;
         }
 
-        public static IReadOnlyCollection<StockTicker> ToModel(this IReadOnlyCollection<StockTicker> models)
-        {
-            if (models.Count == 0)
-            {
-                return Array.Empty<StockTicker>();
-            }
-
-            var stockTickers = new StockTicker[models.Count];
-            var i = 0;
-            foreach (var model in models)
-            {
-                stockTickers[i] = model.ToModel();
-                ++i;
-            }
-
-            return new ReadOnlyCollection<StockTicker>(stockTickers);
-        }
+        public static IReadOnlyCollection<StockTicker> ToService(this IReadOnlyCollection<StockTicker> entities)
+            => entities.MapCollection(ToService);
     }
 }

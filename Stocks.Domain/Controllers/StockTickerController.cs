@@ -47,14 +47,14 @@ namespace Stocks.Domain.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateAsync(string ticker, StockTicker model, CancellationToken ct)
         {
-            var stockTicker =  await _stockTickerService.UpdateAsync(model.ToServiceModel(), ct);
+            var stockTicker =  await _stockTickerService.UpdateAsync(model.ToEntity(), ct);
             stockTicker.Id = ticker;
 
             if (stockTicker == null)
             {
                 return NotFound();
             }
-            return Ok(stockTicker.ToModel());
+            return Ok(stockTicker.ToService());
 
         }
 
@@ -64,13 +64,13 @@ namespace Stocks.Domain.Controllers
         public async Task<ActionResult> AddAsync(StockTicker model, CancellationToken ct)
         {
             model.Id = "GOOG";
-            var stockTicker = await _stockTickerService.AddAsync(model.ToServiceModel(), ct);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = stockTicker.Id }, stockTicker.ToModel());
+            var stockTicker = await _stockTickerService.AddAsync(model.ToEntity(), ct);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = stockTicker.Id }, stockTicker.ToEntity());
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult> RemoveAsync(StockTicker ticker, CancellationToken ct)
+        public async Task<ActionResult> RemoveAsync(string ticker, CancellationToken ct)
         {
             await _stockTickerService.RemoveAsync(ticker, ct);
             return NoContent();

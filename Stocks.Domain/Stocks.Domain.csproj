@@ -33,7 +33,27 @@
     <Folder Include="Formats\" />
     <Folder Include="Mappings\" />
     <Folder Include="Services\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="AuthTokenHelpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\AuthController.cs" />
+    <Compile Remove="Models\ErrorViewModel.cs" />
+    <Compile Remove="AuthTokenHelpers\AccessTokenHttpMessageHandler.cs" />
+    <Compile Remove="AuthTokenHelpers\EnforceAntiForgeryTokenMiddleware.cs" />
+    <Compile Remove="AuthTokenHelpers\CustomCookieAuthenticationEvents.cs" />
+    <Compile Remove="AuthTokenHelpers\TokenRefreshResult.cs" />
+    <Compile Remove="AuthTokenHelpers\TokenRefresher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Views\_ViewImports.cshtml" />
+    <Content Remove="Views\Home\Privacy.cshtml" />
+    <Content Remove="Views\Home\Index.cshtml" />
+    <Content Remove="Views\Home\Contact.cshtml" />
+    <Content Remove="Views\Shared\_Layout.cshtml" />
+    <Content Remove="Views\Shared\Error.cshtml" />
+    <Content Remove="Views\Shared\_CookieConsentPartial.cshtml" />
+    <Content Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <Content Remove="Views\Stock\Create.cshtml" />
+    <Content Remove="Views\Stock\Index.cshtml" />
+    <Content Remove="Views\Stock\Details.cshtml" />
   </ItemGroup>
 </Project>

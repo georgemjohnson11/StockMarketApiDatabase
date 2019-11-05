@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +31,7 @@ namespace Stocks.Domain
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration.GetConnectionString("StockDatabase");
             services.AddEntityFrameworkNpgsql()
@@ -43,20 +40,8 @@ namespace Stocks.Domain
 
             services.AddRequiredMvcComponents();
 
-
-            services
-                .AddTransient<CustomCookieAuthenticationEvents>()
-                .AddTransient<ITokenRefresher, TokenRefresher>()
-                .AddTransient<AccessTokenHttpMessageHandler>()
-                .AddHttpContextAccessor();
-
-            services
-                .AddHttpClient<ITokenRefresher, TokenRefresher>();
-
-
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddConfiguredAuth();
 
 
             services
@@ -68,12 +53,9 @@ namespace Stocks.Domain
                 .AddSingleton<EnforceAuthenticatedUserMiddleware>()
                 .AddSingleton<ValidateAntiForgeryTokenMiddleware>();
 
-            //add Stocks.Data.Services and Stocks.Domain.Services using Autofac
-            var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<AutofacModule>();
-            containerBuilder.Populate(services);
-            var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container);
+            services.AddConfiguredAuth(_configuration);
+            services.AddBusiness();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

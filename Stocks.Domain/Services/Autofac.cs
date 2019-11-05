@@ -65,7 +65,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return _inner.AddAsync(stockTicker, ct);
             }
 
-            public Task<StockTicker> RemoveAsync(StockTicker stockTicker, CancellationToken ct)
+            public Task<StockTicker> RemoveAsync(string stockTicker, CancellationToken ct)
             {
                 return _inner.RemoveAsync(stockTicker, ct);
             }

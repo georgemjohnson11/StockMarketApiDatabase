@@ -18,6 +18,6 @@ namespace Stocks.Data.Services
 
         Task<StockTicker> AddAsync(StockTicker stockTicker, CancellationToken ct);
 
-        Task<StockTicker> RemoveAsync(StockTicker stockTicker, CancellationToken ct);
+        Task<StockTicker> RemoveAsync(string stockTicker, CancellationToken ct);
     }
 }

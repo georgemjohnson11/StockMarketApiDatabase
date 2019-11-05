@@ -9,7 +9,7 @@ using Stocks.Domain.Mappings;
 
 namespace Stocks.Domain.Controllers
 {
-    [Route("stocktickers")]
+    [Route("api/[controller]")]
     public class StockTickerController : ControllerBase
     {
         private readonly IStockTickerService _stockTickerService;

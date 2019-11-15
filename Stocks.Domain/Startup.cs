@@ -1,16 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using ProxyKit;
 using Stocks.Data.Models;
 using Stocks.Domain.Services;
+using System.Threading.Tasks;
 
 namespace Stocks.Domain
 {
@@ -35,20 +33,15 @@ namespace Stocks.Domain
 
             services.AddRequiredMvcComponents();
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-
-
-            services
-                .AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+            //services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
             services.AddProxy();
 
-            
-
-            services.AddConfiguredAuth(_configuration);
+            //services.AddOpenApiDocument();
             services.AddBusiness();
-            
+            services.AddConfiguredAuth(_configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,8 +54,19 @@ namespace Stocks.Domain
             else
             {
                 app.UseExceptionHandler("Index.html");
-                app.UseHsts();
+                //app.UseHsts();
             }
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(() =>
+                {
+                    context.Response.Headers.Add("X-Powered-By", "GMJNOW");
+                    return Task.CompletedTask;
+                });
+
+                await next.Invoke();
+            });
 
             app.UseAuthentication();
 
@@ -70,6 +74,8 @@ namespace Stocks.Domain
             app.UseCookiePolicy();
             
             app.UseMvcWithDefaultRoute();
+            app.UseOpenApi(); // Serves the registered OpenAPI/Swagger documents by default on `/swagger/{documentName}/swagger.json`
+            app.UseSwaggerUi3();
         }
     }
 }

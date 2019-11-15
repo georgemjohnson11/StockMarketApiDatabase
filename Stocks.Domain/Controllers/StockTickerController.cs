@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Stocks.Data.Models;
 using Stocks.Data.Services;
 using Stocks.Domain.Mappings;
+using Serilog;
 
 namespace Stocks.Domain.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("stocktickers")]
     public class StockTickerController : ControllerBase
     {
         private readonly IStockTickerService _stockTickerService;
@@ -18,6 +19,8 @@ namespace Stocks.Domain.Controllers
 
         public StockTickerController(HttpClient httpClient)
         {
+            Log.Debug("Starting up StockTickerController");
+
             _httpClient = httpClient;
         }
 
@@ -25,6 +28,7 @@ namespace Stocks.Domain.Controllers
         [Route("")]
         public async Task<ActionResult<StockTicker>> GetAllAsync(CancellationToken ct)
         {
+            Log.Debug("Getting All StockTickers");
             var response = await _httpClient.GetAsync(BaseAddress, ct);
             var result = await response.Content.ReadAsAsync<IReadOnlyCollection<StockTicker>>(ct);
             return Ok(result);
@@ -42,7 +46,7 @@ namespace Stocks.Domain.Controllers
             return Ok(stockTicker);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("{id}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateAsync(string ticker, StockTicker model, CancellationToken ct)
@@ -58,7 +62,6 @@ namespace Stocks.Domain.Controllers
 
         }
 
-        [HttpPut]
         [HttpPost]
         [Route("")]
         public async Task<ActionResult> AddAsync(StockTicker model, CancellationToken ct)

@@ -26,7 +26,7 @@ namespace Stocks.Domain.Services
 
                 var policy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("scope", "StockTickerManagement")
+                .RequireClaim("scope", "stocktickers")
                 .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             });

@@ -29,7 +29,7 @@ namespace Stocks.Data.Models
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.DockerDevelopment.json")
             .Build();
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("StockDatabase"));
         }

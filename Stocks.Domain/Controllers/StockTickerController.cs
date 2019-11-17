@@ -14,14 +14,12 @@ namespace Stocks.Domain.Controllers
     public class StockTickerController : ControllerBase
     {
         private readonly IStockTickerService _stockTickerService;
-        private const string BaseAddress = "/stocktickers";
-        private readonly HttpClient _httpClient;
 
-        public StockTickerController(HttpClient httpClient)
+        public StockTickerController(IStockTickerService stockTickerService)
         {
             Log.Debug("Starting up StockTickerController");
 
-            _httpClient = httpClient;
+            _stockTickerService = stockTickerService;
         }
 
         [HttpGet]
@@ -29,15 +27,16 @@ namespace Stocks.Domain.Controllers
         public async Task<ActionResult<StockTicker>> GetAllAsync(CancellationToken ct)
         {
             Log.Debug("Getting All StockTickers");
-            var response = await _httpClient.GetAsync(BaseAddress, ct);
-            var result = await response.Content.ReadAsAsync<IReadOnlyCollection<StockTicker>>(ct);
-            return Ok(result);
+            var response = await _stockTickerService.GetAllAsync(ct);
+            return Ok(response.ToService());
         }
 
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult> GetByIdAsync(string ticker, CancellationToken ct)
         {
+            Log.Debug("Getting a StockTickers");
+
             var stockTicker =  await _stockTickerService.GetByIdAsync(ticker, ct);
             if (stockTicker == null)
             {

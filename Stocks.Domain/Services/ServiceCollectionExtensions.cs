@@ -20,16 +20,18 @@ namespace Stocks.Domain.Services
         {
             services.AddTransient<ApiExceptionFilter>();
 
-            var mvcBuilder = services.AddMvcCore(options =>
-            {
-                options.Filters.AddService<ApiExceptionFilter>();
+            var mvcBuilder = services
+                .AddMvcCore(options =>
+                {
+                    options.Filters.AddService<ApiExceptionFilter>();
 
-                var policy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .RequireClaim("scope", "stocktickers")
-                .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            });
+                    var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireClaim("scope", "stocktickers")
+                    .Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddApiExplorer();
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             mvcBuilder.AddJsonFormatters();
             mvcBuilder.AddAuthorization();

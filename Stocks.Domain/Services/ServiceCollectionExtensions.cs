@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -29,7 +29,8 @@ namespace Stocks.Domain.Services
                 .RequireClaim("scope", "stocktickers")
                 .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
-            });
+                })
+                .AddApiExplorer();
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             mvcBuilder.AddJsonFormatters();
             mvcBuilder.AddAuthorization();

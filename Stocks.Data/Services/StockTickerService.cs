@@ -12,7 +12,7 @@ namespace Stocks.Data.Services
     {
         Task<IReadOnlyCollection<StockTicker>> GetAllAsync(CancellationToken ct);
 
-        Task<StockTicker> GetByIdAsync(string ticker, CancellationToken ct);
+        Task<StockTicker> GetByIdAsync(string id, CancellationToken ct);
 
         Task<StockTicker> UpdateAsync(StockTicker stockTicker, CancellationToken ct);
 

@@ -11,6 +11,7 @@ using Serilog;
 namespace Stocks.Domain.Controllers
 {
     [Route("stocktickers")]
+    [ApiController]
     public class StockTickerController : ControllerBase
     {
         private readonly IStockTickerService _stockTickerService;
@@ -28,36 +29,36 @@ namespace Stocks.Domain.Controllers
         {
             Log.Debug("Getting All StockTickers");
             var response = await _stockTickerService.GetAllAsync(ct);
-            return Ok(response.ToService());
+            return Ok(response.ToModel());
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult> GetByIdAsync(string ticker, CancellationToken ct)
+        public async Task<ActionResult> GetByIdAsync(string id, CancellationToken ct)
         {
-            Log.Debug("Getting a StockTickers");
+            var stockTicker =  await _stockTickerService.GetByIdAsync(id.ToUpper(), ct);
 
-            var stockTicker =  await _stockTickerService.GetByIdAsync(ticker, ct);
             if (stockTicker == null)
             {
                 return NotFound();
             }
-            return Ok(stockTicker);
+            Log.Debug(stockTicker.Id);
+            return Ok(stockTicker.ToServiceModel());
         }
 
         [HttpPut]
-        [Route("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateAsync(string ticker, StockTicker model, CancellationToken ct)
+        [Route("{id}")]
+        public async Task<ActionResult> UpdateAsync(string id, StockTicker model, CancellationToken ct)
         {
-            var stockTicker =  await _stockTickerService.UpdateAsync(model.ToEntity(), ct);
-            stockTicker.Id = ticker;
+            var stockTicker =  await _stockTickerService.UpdateAsync(model.ToModel(), ct);
+            stockTicker.Id = id.ToUpper();
 
             if (stockTicker == null)
             {
                 return NotFound();
             }
-            return Ok(stockTicker.ToService());
+            return Ok(stockTicker.ToModel());
 
         }
 
@@ -66,15 +67,15 @@ namespace Stocks.Domain.Controllers
         public async Task<ActionResult> AddAsync(StockTicker model, CancellationToken ct)
         {
             model.Id = "GOOG";
-            var stockTicker = await _stockTickerService.AddAsync(model.ToEntity(), ct);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = stockTicker.Id }, stockTicker.ToEntity());
+            var stockTicker = await _stockTickerService.AddAsync(model.ToModel(), ct);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = stockTicker.Id.ToUpper() }, stockTicker.ToModel());
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult> RemoveAsync(string ticker, CancellationToken ct)
+        public async Task<ActionResult> RemoveAsync(string id, CancellationToken ct)
         {
-            await _stockTickerService.RemoveAsync(ticker, ct);
+            await _stockTickerService.RemoveAsync(id.ToUpper(), ct);
             return NoContent();
         }
     }

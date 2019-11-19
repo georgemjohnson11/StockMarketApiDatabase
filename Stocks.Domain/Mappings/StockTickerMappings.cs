@@ -7,21 +7,21 @@ namespace Stocks.Domain.Mappings
 {
     internal static class StockTickerMappings
     {
-        public static StockTicker ToService(this StockTicker entity)
+        public static StockTicker ToModel(this StockTicker entity)
         {
             return entity != null
                 ? new StockTicker { Id = entity.Id, Name = entity.Name }
                 : null;
         }
 
-        public static StockTicker ToEntity(this StockTicker model)
+        public static StockTicker ToServiceModel(this StockTicker model)
         {
             return model != null
                 ? new StockTicker { Id = model.Id, Name = model.Name }
                 : null;
         }
 
-        public static IReadOnlyCollection<StockTicker> ToService(this IReadOnlyCollection<StockTicker> entities)
-            => entities.MapCollection(ToService);
+        public static IReadOnlyCollection<StockTicker> ToModel(this IReadOnlyCollection<StockTicker> entities)
+            => entities.MapCollection(ToModel);
     }
 }

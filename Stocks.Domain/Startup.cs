@@ -34,18 +34,18 @@ namespace Stocks.Domain
 
             services.AddRequiredMvcComponents();
 
-            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            //services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+            services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
             services.AddProxy();
 
-            //services.AddOpenApiDocument();
             services.AddBusiness();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Stocks API", Version = "v1" });
             });
+            services.AddConfiguredAuth(_configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +58,7 @@ namespace Stocks.Domain
             else
             {
                 app.UseExceptionHandler("Index.html");
-                //app.UseHsts();
+                app.UseHsts();
             }
 
             app.Use(async (context, next) =>

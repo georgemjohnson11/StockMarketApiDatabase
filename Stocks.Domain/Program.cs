@@ -23,7 +23,6 @@ namespace Stocks.Domain
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                   .UseUrls("http://localhost:5001")
                    .UseContentRoot(Directory.GetCurrentDirectory())
                    .UseStartup<Startup>();
 

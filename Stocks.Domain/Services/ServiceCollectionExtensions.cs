@@ -20,9 +20,10 @@ namespace Stocks.Domain.Services
         {
             services.AddTransient<ApiExceptionFilter>();
 
-            var mvcBuilder = services.AddMvcCore(options =>
-            {
-                options.Filters.AddService<ApiExceptionFilter>();
+            var mvcBuilder = services
+                .AddMvcCore(options =>
+                {
+                    options.Filters.AddService<ApiExceptionFilter>();
 
                 var policy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()

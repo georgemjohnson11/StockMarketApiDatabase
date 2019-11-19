@@ -21,28 +21,28 @@ namespace Stocks.Domain.Services
         public async Task<IReadOnlyCollection<StockTicker>> GetAllAsync(CancellationToken ct)
         {
             var stockTickers = await _context.StockTickers.AsNoTracking().OrderBy(g => g.Id).ToListAsync(ct);
-            return stockTickers.ToService();
+            return stockTickers.ToModel();
         }
 
-        public async Task<StockTicker> GetByIdAsync(string ticker, CancellationToken ct)
+        public async Task<StockTicker> GetByIdAsync(string id, CancellationToken ct)
         {
-            var stockTickers = await _context.StockTickers.AsNoTracking().SingleOrDefaultAsync(g => g.Id == ticker, ct);
-            return stockTickers.ToService();
+            var stockTickers = await _context.StockTickers.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id, ct);
+            return stockTickers.ToModel();
         }
 
         public async Task<StockTicker> UpdateAsync(StockTicker stockTickers, CancellationToken ct)
         {
-            var updatedStockTickerEntry = _context.StockTickers.Update(stockTickers.ToEntity());
+            var updatedStockTickerEntry = _context.StockTickers.Update(stockTickers.ToModel());
             await _context.SaveChangesAsync(ct);
-            return updatedStockTickerEntry.Entity.ToService();
+            return updatedStockTickerEntry.Entity.ToServiceModel();
         }
 
 
         public async Task<StockTicker> AddAsync(StockTicker stockTickers, CancellationToken ct)
         {
-            var addedStockTickerEntry = _context.StockTickers.Add(stockTickers.ToEntity());
+            var addedStockTickerEntry = _context.StockTickers.Add(stockTickers.ToModel());
             await _context.SaveChangesAsync(ct);
-            return addedStockTickerEntry.Entity.ToService();
+            return addedStockTickerEntry.Entity.ToServiceModel();
         }
 
         public async Task<StockTicker> RemoveAsync(string ticker, CancellationToken ct)
@@ -53,7 +53,7 @@ namespace Stocks.Domain.Services
                 _context.Remove(stockTickers);
                 await _context.SaveChangesAsync(ct);
             }
-            return stockTickers.ToService();
+            return stockTickers.ToServiceModel();
         }
     }
 }
